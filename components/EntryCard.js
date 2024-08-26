@@ -2,8 +2,7 @@ import { motion } from 'framer-motion'
 import { Calendar, ThumbsUp } from 'lucide-react'
 
 const EntryCard = ({ entry }) => {
-  const date = new Date(entry.createdAt).toDateString()
-
+  const date = new Date(entry.created_at).toDateString()
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -18,12 +17,12 @@ const EntryCard = ({ entry }) => {
         </div>
       </div>
       <div className="px-6 py-4">
-        <p className="text-gray-300">{entry.analysis.summary}</p>
+        <p className="text-gray-300">{entry.analysis?.summary}</p>
       </div>
       <div className="px-6 py-4 flex items-center justify-between border-t border-gray-700">
         <div className="flex items-center text-gray-300">
           <ThumbsUp className="w-5 h-5 mr-2" />
-          <span>{entry.analysis.mood}</span>
+          <span>{entry.analysis?.mood}</span>
         </div>
       </div>
     </motion.div>

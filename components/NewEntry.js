@@ -1,14 +1,50 @@
+import React from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { newEntry } from '@/utils/api'
 import { PlusCircle } from 'lucide-react'
+import supabase from '@/utils/supabase'
 
 const NewEntry = () => {
   const router = useRouter()
 
   const handleOnClick = async () => {
-    const { data } = await newEntry()
-    router.push(`/journal/${data.id}`)
+    try {
+      const { data: userData, error: userError } = await supabase.auth.getUser()
+      if (userError) throw new Error(`Failed to get user: ${userError.message}`)
+
+      const { data: entryData, error: entryError } = await supabase
+        .from('journal_entries')
+        .insert({
+          content: 'new entry',
+          user_id: userData.user.id,
+          status: 'DRAFT',
+        })
+        .select()
+
+      const { data: entryAnalysisData, error: entryAnalysisError } =
+        await supabase.from('entry_analyses').insert({
+          user_id: userData.user.id,
+          entry_id: data[0].id,
+          mood: 'NEUTRAL',
+          negative: false,
+          sentimentScore: 0,
+          subject: 'None',
+          summary: 'None',
+          color: '#0101fe',
+        })
+
+      if (entryError)
+        throw new Error(`Failed to create new entry: ${entryError.message}`)
+      if (entryAnalysisError)
+        throw new Error(
+          `Failed to create new entry analysis: ${entryAnalysisError.message}`
+        )
+
+      router.push(`/journal/${entryData[0].id}`)
+    } catch (error) {
+      console.error(error)
+      // You might want to add some user feedback here, like a toast notification
+    }
   }
 
   return (

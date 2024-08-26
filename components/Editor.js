@@ -1,10 +1,10 @@
 'use client'
-import { updateEntry, deleteEntry } from '@/utils/api'
 import { useState } from 'react'
 import { useAutosave } from 'react-autosave'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Loader2, Save, Trash2 } from 'lucide-react'
+import supabase from '@/utils/supabase'
 
 const Editor = ({ entry }) => {
   const [text, setText] = useState(entry.content)
@@ -13,8 +13,16 @@ const Editor = ({ entry }) => {
   const router = useRouter()
 
   const handleDelete = async () => {
-    await deleteEntry(entry.id)
-    router.push('/journal')
+    const { error } = await supabase
+      .from('journal_entries')
+      .delete()
+      .eq('id', entry.id)
+
+    if (error) {
+      console.error('Error deleting entry:', error)
+    } else {
+      router.push('/journal')
+    }
   }
 
   useAutosave({
@@ -22,8 +30,18 @@ const Editor = ({ entry }) => {
     onSave: async (_text) => {
       if (_text === entry.content) return
       setIsSaving(true)
-      const { data } = await updateEntry(entry.id, { content: _text })
-      setEntry(data)
+      const { data, error } = await supabase
+        .from('journal_entries')
+        .update({ content: _text })
+        .eq('id', entry.id)
+        .select('*, analysis(*)')
+        .single()
+
+      if (error) {
+        console.error('Error updating entry:', error)
+      } else {
+        setEntry(data)
+      }
       setIsSaving(false)
     },
   })
