@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { askQuestion } from '@/utils/api'
 import { Send, Loader, AlertCircle } from 'lucide-react'
+import { askQuestion } from '@/utils/api'
 
-const Question = () => {
+const Question = ({ entries }) => {
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -18,7 +18,7 @@ const Question = () => {
     setLoading(true)
     setError(null)
     try {
-      const { data } = await askQuestion(question)
+      const { data } = await askQuestion(question, entries)
       setAnswer(data)
       setQuestion('')
     } catch (err) {

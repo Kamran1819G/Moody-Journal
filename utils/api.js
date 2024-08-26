@@ -1,69 +1,41 @@
-const createURL = (path) => window.location.origin + path
-
-export const fetcher = (...args) => fetch(...args).then((res) => res.json())
-
-export const deleteEntry = async (id) => {
-  const res = await fetch(
-    new Request(createURL(`/api/entry/${id}`), {
-      method: 'DELETE',
-    })
-  )
-  if (res.ok) {
-    return res.json()
-  } else {
-    throw new Error(`Failed to delete entry: ${res.status} ${res.statusText}`)
-  }
-}
-
-export const newEntry = async (content = 'new entry') => {
-  const res = await fetch(
-    new Request(createURL('/api/entry'), {
+export const analyzeEntry = async (entry) => {
+  try {
+    const response = await fetch('/api/analyze-entry', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ content }),
+      body: JSON.stringify({ content: entry.content }),
     })
-  )
-  if (res.ok) {
-    return res.json()
-  } else {
-    throw new Error(
-      `Failed to create new entry: ${res.status} ${res.statusText}`
-    )
+
+    if (!response.ok) {
+      throw new Error('Failed to analyze entry')
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('Failed to analyze entry:', error)
+    return null
   }
 }
 
-export const updateEntry = async (id, updates) => {
-  const res = await fetch(
-    new Request(createURL(`/api/entry/${id}`), {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ updates }),
-    })
-  )
-  if (res.ok) {
-    return res.json()
-  } else {
-    throw new Error(`Failed to update entry: ${res.status} ${res.statusText}`)
-  }
-}
-
-export const askQuestion = async (question) => {
-  const res = await fetch(
-    new Request(createURL(`/api/question`), {
+export const askQuestion = async (question, entries) => {
+  try {
+    const response = await fetch('/api/ask-question', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, entries }),
     })
-  )
-  if (res.ok) {
-    return res.json()
-  } else {
-    throw new Error(`Failed to ask question: ${res.status} ${res.statusText}`)
+
+    if (!response.ok) {
+      throw new Error('Failed to process question')
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('Failed to process question:', error)
+    return null
   }
 }

@@ -21,17 +21,22 @@ const NewEntry = () => {
         })
         .select()
 
+      console.log('entryData:', entryData)
+
       const { data: entryAnalysisData, error: entryAnalysisError } =
-        await supabase.from('entry_analyses').insert({
-          user_id: userData.user.id,
-          entry_id: data[0].id,
-          mood: 'NEUTRAL',
-          negative: false,
-          sentimentScore: 0,
-          subject: 'None',
-          summary: 'None',
-          color: '#0101fe',
-        })
+        await supabase
+          .from('entry_analyses')
+          .insert({
+            user_id: userData.user.id,
+            entry_id: entryData[0].id,
+            mood: 'NEUTRAL',
+            negative: false,
+            sentiment_score: 0,
+            subject: 'None',
+            summary: 'None',
+            color: '#0101fe',
+          })
+          .select()
 
       if (entryError)
         throw new Error(`Failed to create new entry: ${entryError.message}`)

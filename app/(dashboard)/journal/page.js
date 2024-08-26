@@ -74,7 +74,7 @@ export default function JournalPage() {
         </h1>
         <Card className="mb-12 bg-gray-800 text-gray-300">
           <CardContent className="p-6">
-            <Question />
+            <Question entries={entries} />
           </CardContent>
         </Card>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

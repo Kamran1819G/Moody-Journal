@@ -27,7 +27,12 @@ const JournalEditorPage = ({ params }) => {
 
       const { data, error } = await supabase
         .from('journal_entries')
-        .select('*, analysis(*)')
+        .select(
+          `
+          *,
+          analysis:entry_analyses(*)
+        `
+        )
         .eq('user_id', user.id)
         .eq('id', params.id)
         .single()
