@@ -15,7 +15,7 @@ const NewEntry = () => {
       const { data: entryData, error: entryError } = await supabase
         .from('journal_entries')
         .insert({
-          content: 'new entry',
+          content: 'New Entry',
           user_id: userData.user.id,
           status: 'DRAFT',
         })

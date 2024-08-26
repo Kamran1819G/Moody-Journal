@@ -202,7 +202,7 @@ const Editor = ({ entry }) => {
           >
             <h3 className="text-lg font-semibold mb-2">Sentiment Score</h3>
             <p className="text-xl">
-              {currentEntry.analysis?.sentimentScore?.toFixed(2) || 'N/A'}
+              {currentEntry.analysis?.sentiment_score?.toFixed(2) || 'N/A'}
             </p>
           </motion.div>
           <motion.div
